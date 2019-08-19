@@ -3,7 +3,7 @@ import App from './App.vue'
 import router from './router'
 import ElementUI from 'element-ui' // 引入element组件
 import 'element-ui/lib/theme-chalk/index.css' // 引入样式
-
+import './styles/index.less' // 引文重置的基础样式
 Vue.use(ElementUI) // 注册element组件
 Vue.config.productionTip = false
 
