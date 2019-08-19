@@ -78,7 +78,9 @@ export default {
             url: '/authorizations',
             data: this.formData // post参数是在data中写入的
           }).then(result => {
-            console.log(result.data.data)
+            window.localStorage.setItem('user-info', JSON.stringify(result.data.data))
+            // 编程式导航
+            this.$router.push('/home')
           })
         }
       })
