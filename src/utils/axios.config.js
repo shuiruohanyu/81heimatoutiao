@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { Message } from 'element-ui' // 引入message模块
 axios.defaults.baseURL = 'http://ttapi.research.itcast.cn/mp/v1_0' // 将后台接口的地址给axios的baseURL
 // 请求拦截器
 axios.interceptors.request.use(function (config) {
@@ -12,12 +13,38 @@ axios.interceptors.request.use(function (config) {
   // 对请求失败做处理
   return Promise.reject(error)
 })
-// 相应拦截器
+// 响应拦截器
 axios.interceptors.response.use(function (response) {
   // 对响应数据做处理
   return response.data ? response.data : {}
 }, function (error) {
   // 对响应错误做处理
-  return Promise.reject(error)
+  let code = error.response ? error.response.status : '' // 获取错误的状态码
+  let message = ''
+  switch (code) {
+    case 400:
+      message = '请求参数错误'
+      break
+    case 403:
+      message = '用户非实名认证用户'
+      break
+    case 507:
+      message = '服务器数据库异常'
+      break
+    case 404:
+      message = '手机号码不正确'
+      break
+    case 401:
+      // 针对token过期或者失效的特殊处理
+      message = 'token过期或未传'
+      window.localStorage.clear() // 只清除本项目的缓存
+      window.location.hash = '#/login' // 跳转到登录页
+      break
+    default:
+      message = '未知错误!'
+      break
+  }
+  Message({ message, type: 'warning' })
+  return new Promise()
 })
 export default axios
