@@ -1,7 +1,7 @@
 <template>
   <!-- 用el-row 和el-col布局 -->
   <el-row class="layout-header" type="flex" justify="space-between">
-    <el-col :span="6" class="left-header">
+    <el-col :span="16" class="left-header">
       <i class="el-icon-s-unfold"></i>
       <span>江苏传智播客教育科技股份有限公司</span>
     </el-col>
