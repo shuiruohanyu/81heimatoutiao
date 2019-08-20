@@ -81,6 +81,12 @@ export default {
             window.localStorage.setItem('user-info', JSON.stringify(result.data.data))
             // 编程式导航
             this.$router.push('/home')
+          }).catch(() => {
+            // $message是elementUI注入到Vue实例的方法
+            this.$message({
+              message: '当前用户名或者密码错误',
+              type: 'warning'
+            })
           })
         }
       })
