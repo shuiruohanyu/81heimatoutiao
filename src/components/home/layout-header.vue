@@ -6,12 +6,12 @@
       <span>江苏传智播客教育科技股份有限公司</span>
     </el-col>
     <el-col class="layout-right" :span="3">
-      <img src="../../assets/img/avatar.jpg" alt />
+      <img :src="user.photo ? user.photo : defaultImg" alt />
       <!-- 两个插槽  匿名插槽  具名插槽 -->
       <el-dropdown trigger="click">
         <!-- 匿名插槽 -->
         <span class="el-dropdown-link">
-          我是56123
+          {{ user.name }}
           <i class="el-icon-arrow-down el-icon--right"></i>
         </span>
         <!-- 具名插槽 dropdown-->
@@ -26,7 +26,32 @@
 </template>
 
 <script>
-export default {}
+export default {
+  data () {
+    return {
+      user: {
+
+      },
+      defaultImg: require('../../assets/img/avatar.jpg') // require的图片就变成了base64
+    }
+  },
+  methods: {
+    // 获取用户信息
+    getUserInfo () {
+      let userInfo = window.localStorage.getItem('user-info') // 获取用户存储信息 存储信息里有token
+      let token = userInfo ? JSON.parse(userInfo).token : null // 获取token
+      token && this.$axios({
+        url: '/user/profile',
+        headers: { 'Authorization': `Bearer ${token}` } // 将headers中赋值 后端需要的token身份信息  携带令牌
+      }).then(result => {
+        this.user = result.data.data // 获取到用户的最新个人资料 赋值给data中的数据
+      })
+    }
+  },
+  created () {
+    this.getUserInfo() // 获取用户信息
+  }
+}
 </script>
 
 <style lang='less' scoped>
