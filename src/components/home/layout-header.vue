@@ -42,7 +42,7 @@ export default {
       this.$axios({
         url: '/user/profile'
       }).then(result => {
-        this.user = result.data.data // 获取到用户的最新个人资料 赋值给data中的数据
+        this.user = result.data // 获取到用户的最新个人资料 赋值给data中的数据
       })
     },
     // 点击菜单项会触发的事件
