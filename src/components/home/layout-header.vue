@@ -53,6 +53,7 @@ export default {
     commandAction (command) {
       if (command === 'account') {
         // 账户信息
+        this.$router.push('/home/account') // 跳转到账户信息
       } else if (command === 'git') {
         // 跳转到git地址
         window.location.href = 'https://github.com/shuiruohanyu/81heimatoutiao'
