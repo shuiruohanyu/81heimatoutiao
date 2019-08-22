@@ -1,5 +1,5 @@
 <template>
-  <el-card>
+  <el-card v-loading="loading">
     <!-- el-card 具名插槽 header -->
     <bread-crumb slot="header">
       <!-- 面包屑的插槽 具名插槽  title-->
@@ -10,7 +10,7 @@
       <el-table-column label="标识" prop="id"></el-table-column>
      <el-table-column label="姓名" prop="name"></el-table-column>
     </el-table>-->
-    <el-table :data="list" stripe>
+    <el-table :data="list" stripe >
       <!-- prop属性是绑定的字段名称 -->
       <el-table-column prop="title" width="500" label="标题"></el-table-column>
       <el-table-column :formatter="formatter" prop="comment_status" label="评论状态"></el-table-column>
@@ -53,7 +53,8 @@ export default {
         pageSize: 10,
         total: 0,
         currentPage: 1
-      }
+      },
+      loading: false
     }
   },
   methods: {
@@ -84,6 +85,7 @@ export default {
     // axios 中 有一个对象存储的就是query参数  params
     // axios 中 有一个对象存储的就是body参数  data
     getComments () {
+      this.loading = true // 将加载进度设置成加载状态
       let pageParams = { page: this.page.currentPage,
         per_page: this.page.pageSize } // 页码参数
       this.$axios({
@@ -95,6 +97,7 @@ export default {
       }).then(result => {
         this.list = result.data.results // 取到列表数据 给 当前的数据对象
         this.page.total = result.data.total_count // 文章评论列表总数 赋值给当前分页的总数
+        this.loading = false // 关闭加载进度
       })
     },
     // row 当条数据对象
