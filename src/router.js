@@ -30,6 +30,9 @@ export default new Router({
       }, {
         path: '/home/comment', // 评论列表
         component: () => import('./views/comment') // 按需加载的写法
+      }, {
+        path: '/home/material', // 素材列表
+        component: () => import('./views/material') // 按需加载的写法
       }
       ]
     }
