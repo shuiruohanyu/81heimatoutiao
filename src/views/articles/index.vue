@@ -6,27 +6,31 @@
     <!-- 工具栏-表单 -->
     <el-form style='margin-left:40px'>
       <el-form-item label="文章状态">
-        <el-radio-group v-model="radio">
-          <el-radio :label="1">全部</el-radio>
-          <el-radio :label="2">草稿</el-radio>
-          <el-radio :label="3">待审核</el-radio>
-          <el-radio :label="4">审核成功</el-radio>
-          <el-radio :label="5">审核失败</el-radio>
+        <el-radio-group @change="refreshList" v-model="formData.status">
+          <!-- label必须有值 定义5 -->
+          <el-radio :label="5">全部</el-radio>
+          <el-radio :label="0">草稿</el-radio>
+          <el-radio :label="1">待审核</el-radio>
+          <el-radio :label="2">审核成功</el-radio>
+          <el-radio :label="3">审核失败</el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item label="频道列表">
-        <el-select v-model="value" placeholder="请选择">
+        <el-select @change="refreshList" v-model="formData.channel_id" placeholder="请选择">
           <el-option
-            v-for="item in options"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
+            v-for="item in channels"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
           ></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="时间选择">
+        <!-- value-format 是指定 绑定值得格式 -->
          <el-date-picker
-      v-model="value1"
+         @change="refreshList"
+         value-format="yyyy-MM-dd"
+      v-model="formData.dateRange"
       type="daterange"
       start-placeholder="开始日期"
       end-placeholder="结束日期">
@@ -71,25 +75,13 @@
 export default {
   data () {
     return {
-      radio: 1,
-      value: '',
-      value1: '',
-      options: [{
-        value: '选项1',
-        label: '黄金糕'
-      }, {
-        value: '选项2',
-        label: '双皮奶'
-      }, {
-        value: '选项3',
-        label: '蚵仔煎'
-      }, {
-        value: '选项4',
-        label: '龙须面'
-      }, {
-        value: '选项5',
-        label: '北京烤鸭'
-      }],
+      // 搜索工具栏的数据
+      formData: {
+        status: 5, // 默认是全部
+        channel_id: null, // 定义频道id 当前选择的频道
+        dateRange: null // 时间范围 是个数组
+      },
+      channels: [], // 频道数据
       list: [], // 内容列表
       page: {
         total: 0
@@ -97,13 +89,36 @@ export default {
     }
   },
   methods: {
+    // 刷新列表数据 状态改变/频道切换/日期改变 都会触发
+    refreshList () {
+      // var obj = {name:'张三'} let { name } = obj  var name = obj.name let {name:name1}= obj => 相当于 var name1 = obj.name
+      let { status, channel_id: cid, dateRange } = this.formData // 解构赋值
+      let params = {
+        // key:value(三元表达式)
+        status: status === 5 ? null : status, // 由于默认给了5 但是如果是5的话  不能传 所以这里特殊处理一下
+        channel_id: cid,
+        // (三元表达式)
+        begin_pubdate: dateRange && dateRange.length ? dateRange[0] : null,
+        end_pubdate: dateRange && dateRange.length > 1 ? dateRange[1] : null
+      }
+      this.getArticles(params) // 调用查询接口 传入参数
+    },
     // 获取文章
-    getArticles () {
+    getArticles (params) {
       this.$axios({
-        url: '/articles'
+        url: '/articles',
+        params: { ...params }
       }).then(result => {
         this.list = result.data.results // 将当前的数据赋值给data中对象
         this.page.total = result.data.total_count // 当前总条数
+      })
+    },
+    // 获取频道列表数据
+    getChannels () {
+      this.$axios({
+        url: '/channels'
+      }).then(result => {
+        this.channels = result.data.channels
       })
     }
   },
@@ -137,7 +152,8 @@ export default {
     }
   },
   created () {
-    this.getArticles()
+    this.getArticles() // 获取文章列表
+    this.getChannels() // 获取频道分类
   }
 }
 </script>
