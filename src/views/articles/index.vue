@@ -50,11 +50,11 @@
         </div>
         <!-- 右侧内容 -->
         <div class="right">
-          <span>
+          <span style='cursor:pointer'>
             <i class="el-icon-edit"></i>
             修改
           </span>
-          <span>
+          <span @click="delItem(item)" style='cursor:pointer'>
             <i class="el-icon-delete"></i>
             删除
           </span>
@@ -88,6 +88,19 @@ export default {
     }
   },
   methods: {
+    // 删除方法
+    delItem (item) {
+      this.$confirm('您确定删除此条文章?', '提示').then(() => {
+        this.$axios({
+          method: 'delete',
+          url: `/articles/${item.id.toString()}`
+        }).then(() => {
+          // 重新加载
+          // 由于 页码未变 条件未变 直接请求获取方法即可
+          this.getArticles(this.getConditions())
+        })
+      })
+    },
     // 获取条件 A状态改变 + B频道切换 + C日期改变
     getConditions () {
       // var obj = {name:'张三'} let { name } = obj  var name = obj.name let {name:name1}= obj => 相当于 var name1 = obj.name
