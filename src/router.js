@@ -36,6 +36,9 @@ export default new Router({
       }, {
         path: '/home/articles', // 内容列表
         component: () => import('./views/articles') // 按需加载的写法
+      }, {
+        path: '/home/publish', // 发表文章
+        component: () => import('./views/publish') // 按需加载的写法
       }
       ]
     }
