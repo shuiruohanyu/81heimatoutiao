@@ -4,7 +4,7 @@
       <template slot="title">内容列表</template>
     </bread-crumb>
     <!-- 工具栏-表单 -->
-    <el-form>
+    <el-form style='margin-left:40px'>
       <el-form-item label="文章状态">
         <el-radio-group v-model="radio">
           <el-radio :label="1">全部</el-radio>
@@ -34,7 +34,7 @@
       </el-form-item>
     </el-form>
     <div class='total_title'>
-      共找到56789条符合条件的内容
+      共找到{{page.total}}条符合条件的内容
     </div>
     <!-- 内容列表 -->
     <div class='content-list'>
@@ -42,12 +42,13 @@
       <div class='content-item' v-for="(item,index) in list" :key="index" >
         <!-- 左侧内容 -->
           <div class='left'>
-            <img src="../../assets/img/404.png" alt="">
+            <img :src="item.cover.images[0]" alt="">
             <!-- 内容信息 -->
             <div class='info'>
-              <span>我是内容标题</span>
-              <el-tag style='width:60px'>标签一</el-tag>
-              <span class='date'>2019-08-22 17:21:31</span>
+              <!-- 文章标题 -->
+              <span>{{item.title}}</span>
+              <el-tag style='width:60px' :type='item.status | statusType'>{{item.status | statusText}}</el-tag>
+              <span class='date'>{{item. pubdate}}</span>
             </div>
           </div>
           <!-- 右侧内容 -->
@@ -89,8 +90,54 @@ export default {
         value: '选项5',
         label: '北京烤鸭'
       }],
-      list: [1, 2, 3, 4, 5, 6, 7] // 内容列表
+      list: [], // 内容列表
+      page: {
+        total: 0
+      }
     }
+  },
+  methods: {
+    // 获取文章
+    getArticles () {
+      this.$axios({
+        url: '/articles'
+      }).then(result => {
+        this.list = result.data.results // 将当前的数据赋值给data中对象
+        this.page.total = result.data.total_count // 当前总条数
+      })
+    }
+  },
+  // 过滤器
+  filters: {
+    statusText (value) {
+      // value是传过来的值
+      switch (value) {
+        case 0:
+          return '草稿'
+        case 2:
+          return '已发表'
+        case 3:
+          return '审核失败'
+        case 4:
+          return '已删除'
+      }
+    },
+    // 过滤tag标签的类型
+    statusType (value) {
+      switch (value) {
+        case 0:
+          return 'warning'
+        case 2:
+          return 'success'
+        case 3:
+          return 'danger'
+        case 4:
+          return 'info'
+      }
+    }
+  },
+  created () {
+    this.getArticles()
   }
 }
 </script>
