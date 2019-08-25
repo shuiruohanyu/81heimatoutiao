@@ -1,5 +1,5 @@
 <template>
-  <el-card >
+  <el-card v-loading="loading">
       <bread-crumb slot='header'>
        <template slot='title'>账户信息</template>
       </bread-crumb>
@@ -25,7 +25,9 @@
              <el-button @click="saveUserInfo" type='primary'>保存信息</el-button>
          </el-form-item>
       </el-form>
-      <img class='head-img' :src="formData.photo ? formData.photo : imgUrl  " alt="">
+      <el-upload class='head-img' action="" :show-file-list="false" :http-request="uploadImg">
+        <img  :src="formData.photo ? formData.photo : imgUrl  " alt="">
+      </el-upload>
   </el-card>
 </template>
 
@@ -33,6 +35,7 @@
 export default {
   data () {
     return {
+      loading: false,
       imgUrl: require('../../assets/img/404.png'),
       formData: {
         name: '',
@@ -51,6 +54,20 @@ export default {
     }
   },
   methods: {
+    uploadImg (params) {
+      this.loading = true
+      let data = new FormData()
+      data.append('photo', params.file)
+      this.$axios({
+        method: 'patch',
+        url: '/user/photo',
+        data // 参数
+      }).then(result => {
+        // 获取到新地址之后 赋值给当前页面
+        this.formData.photo = result.data.photo
+        this.loading = false
+      })
+    },
     getUserInfo () {
       this.$axios({
         url: '/user/profile'
@@ -84,8 +101,10 @@ export default {
      position: absolute;
      left: 700px;
      top:150px;
-     height: 200px;
-     width: 200px;
-     border-radius: 50%;
+     img {
+      height: 200px;
+      width: 200px;
+      border-radius: 50%;
+     }
  }
 </style>
