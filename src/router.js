@@ -39,6 +39,9 @@ export default new Router({
       }, {
         path: '/home/publish', // 发表文章
         component: () => import('./views/publish') // 按需加载的写法
+      }, {
+        path: '/home/publish/:articleId', // 编辑文章  动态路由 定义了一个articleId
+        component: () => import('./views/publish') // 按需加载的写法
       }
       ]
     }
