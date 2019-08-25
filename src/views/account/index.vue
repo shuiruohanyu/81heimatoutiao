@@ -32,6 +32,7 @@
 </template>
 
 <script>
+import eventBus from '../../utils/eventBus'
 export default {
   data () {
     return {
@@ -46,7 +47,7 @@ export default {
       },
       rules: {
         name: [{ required: true, message: '用户名称不能为空' },
-          { min: 2, max: 10, message: '用户名称必须控制在2到10个字符' }],
+          { min: 1, max: 7, message: '用户名称必须控制在2到10个字符' }],
         email: [{ required: true, message: '邮箱不能为空' },
           { pattern: /^\w+((.\w+)|(-\w+))@[A-Za-z0-9]+((.|-)[A-Za-z0-9]+).[A-Za-z0-9]+$/, message: '邮箱格式不正确' }]
 
@@ -66,6 +67,9 @@ export default {
         // 获取到新地址之后 赋值给当前页面
         this.formData.photo = result.data.photo
         this.loading = false
+        //  this.$emit("") // 账户组件
+        //  eventBus.$emit // 组件 是新实例化的Vue实例
+        eventBus.$emit('updateUserInfoSuccess') // 触发一个事件 更新用户头像成功了
       })
     },
     getUserInfo () {
@@ -85,6 +89,7 @@ export default {
             data: this.formData
           }).then(() => {
             this.$message({ message: '保存成功', type: 'success' })
+            eventBus.$emit('updateUserInfoSuccess') // 触发一个事件 更新用户头像成功了
           })
         }
       })
