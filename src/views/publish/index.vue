@@ -11,7 +11,7 @@
         <quill-editor style='width:800px;height:400px;margin-bottom:100px' v-model="formData.content"  type="textarea" :rows="4" placeholder="请输入内容" ></quill-editor>
       </el-form-item>
       <el-form-item label="封面">
-          <el-radio-group v-model='formData.cover.type'>
+          <el-radio-group @change="changeType" v-model='formData.cover.type'>
               <el-radio :label='1'>单图</el-radio>
               <el-radio :label="3">三图</el-radio>
               <el-radio :label='0'>无图</el-radio>
@@ -58,6 +58,17 @@ export default {
     }
   },
   methods: {
+    changeType () {
+      // 可以获取到最新的封面类型
+      // 去改变当前的images类型
+      if (this.formData.cover.type === 1) {
+        this.formData.cover.images = [''] // 当类型为单图时 这时要为数组生成一个地址
+      } else if (this.formData.cover.type === 3) {
+        this.formData.cover.images = ['', '', ''] // 当类型为3图时 这时要为数组生成3个地址
+      } else {
+        this.formData.cover.images = []
+      }
+    },
     // 发布内容
     publish (draft) {
       this.$refs.myForm.validate((isOK) => {
