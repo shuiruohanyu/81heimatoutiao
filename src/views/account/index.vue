@@ -3,9 +3,9 @@
       <bread-crumb slot='header'>
        <template slot='title'>账户信息</template>
       </bread-crumb>
-      <el-form label-width="100px">
+      <el-form ref="userForm" :model="formData" :rules="rules" label-width="100px">
           <!-- 用户名 -->
-          <el-form-item label='用户名称'>
+          <el-form-item prop='name' label='用户名称'>
               <el-input v-model="formData.name" style='width:300px'></el-input>
           </el-form-item>
            <!-- 简介 -->
@@ -13,7 +13,7 @@
                 <el-input v-model="formData.intro" style='width:300px'></el-input>
           </el-form-item>
           <!-- 邮箱 -->
-          <el-form-item label='用户邮箱'>
+          <el-form-item prop='email' label='用户邮箱'>
                 <el-input v-model="formData.email" style='width:300px'></el-input>
           </el-form-item>
           <!-- 手机号 -->
@@ -22,7 +22,7 @@
           </el-form-item>
          <!-- 保存按钮 -->
          <el-form-item>
-             <el-button type='primary'>保存信息</el-button>
+             <el-button @click="saveUserInfo" type='primary'>保存信息</el-button>
          </el-form-item>
       </el-form>
       <img class='head-img' :src="formData.photo ? formData.photo : imgUrl  " alt="">
@@ -40,6 +40,13 @@ export default {
         photo: '',
         email: '',
         mobile: ''
+      },
+      rules: {
+        name: [{ required: true, message: '用户名称不能为空' },
+          { min: 2, max: 10, message: '用户名称必须控制在2到10个字符' }],
+        email: [{ required: true, message: '邮箱不能为空' },
+          { pattern: /^\w+((.\w+)|(-\w+))@[A-Za-z0-9]+((.|-)[A-Za-z0-9]+).[A-Za-z0-9]+$/, message: '邮箱格式不正确' }]
+
       }
     }
   },
@@ -49,6 +56,20 @@ export default {
         url: '/user/profile'
       }).then(result => {
         this.formData = result.data
+      })
+    },
+    saveUserInfo () {
+      this.$refs.userForm.validate((isOK) => {
+        if (isOK) {
+          // 保存数据
+          this.$axios({
+            method: 'patch',
+            url: '/user/profile',
+            data: this.formData
+          }).then(() => {
+            this.$message({ message: '保存成功', type: 'success' })
+          })
+        }
       })
     }
   },
