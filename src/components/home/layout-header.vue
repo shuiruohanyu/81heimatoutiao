@@ -2,7 +2,7 @@
   <!-- 用el-row 和el-col布局 -->
   <el-row class="layout-header" type="flex" justify="space-between">
     <el-col :span="16" class="left-header">
-      <i class="el-icon-s-unfold"></i>
+      <i @click="openOrClose" :class="currentClass"></i>
       <span>江苏传智播客教育科技股份有限公司</span>
     </el-col>
     <el-col class="layout-right" :span="3">
@@ -34,10 +34,16 @@ export default {
       user: {
 
       },
+      currentClass: 'el-icon-s-fold', // 默认向左的图标
       defaultImg: require('../../assets/img/avatar.jpg') // require的图片就变成了base64
     }
   },
   methods: {
+    // 展开或者关闭
+    openOrClose () {
+      eventBus.$emit('collopseOrClose') // 触发了一个事件 打开或者
+      this.currentClass = this.currentClass === 'el-icon-s-fold' ? 'el-icon-s-unfold' : 'el-icon-s-fold'
+    },
     // 获取用户信息
     getUserInfo () {
       this.$axios({
