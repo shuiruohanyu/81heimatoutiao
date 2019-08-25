@@ -11,7 +11,7 @@
         <el-input v-model="formData.content"  type="textarea" :rows="4" placeholder="请输入内容" ></el-input>
       </el-form-item>
       <el-form-item label="封面">
-          <el-radio-group v-model='formData.cover'>
+          <el-radio-group v-model='formData.cover.type'>
               <el-radio :label='1'>单图</el-radio>
               <el-radio :label="3">三图</el-radio>
               <el-radio :label='0'>无图</el-radio>
@@ -24,8 +24,8 @@
           </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button @click="publish" type="primary">发布</el-button>
-        <el-button>存入草稿</el-button>
+        <el-button @click="publish(false)" type="primary">发布</el-button>
+        <el-button @click="publish(true)">存入草稿</el-button>
       </el-form-item>
     </el-form>
   </el-card>
@@ -40,10 +40,18 @@ export default {
         title: '',
         content: '',
         channel_id: null,
-        cover: 0 // 默认给个无图
+        cover: {
+          type: 0, // 类型
+          images: [] // 图片数组 随着 type变化而变化 type =>  image 变化 type  == 1 images ['']  type = 3 images ['','',''] 否则images为 []
+        } // 默认给个无图
       },
       rules: {
-        title: [{ required: true, message: '标题内容不能为空' }],
+        title: [{ required: true, message: '标题内容不能为空' },
+          {
+            min: 5,
+            max: 30,
+            message: '标题内容必须在5到30个字符之间'
+          }],
         content: [{ required: true, message: '文章内容不能为空' }],
         channel_id: [{ required: true, message: '频道不能为空' }]
       }
@@ -51,10 +59,19 @@ export default {
   },
   methods: {
     // 发布内容
-    publish () {
+    publish (draft) {
       this.$refs.myForm.validate((isOK) => {
         if (isOK) {
           // 发布文章
+          this.$axios({
+            method: 'post',
+            url: '/articles',
+            params: { draft }, // 是否为草稿
+            data: this.formData
+          }).then(() => {
+            // 如果发布成功 就会跳转到内容列表
+            this.$router.push('/home/articles')
+          })
         }
       })
     },
