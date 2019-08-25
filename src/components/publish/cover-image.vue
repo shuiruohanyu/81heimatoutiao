@@ -14,12 +14,12 @@
 <script>
 // images 会根据type的变化而变化吗 [] ['']  ['','','']
 export default {
-  props: ['type', 'images'],
+  props: ['images'],
   data () {
     return {
       selectIndex: -1,
       showDialog: false,
-      defaultImg: require('../../assets/img/pic_bg.png')
+      defaultImg: require('../../assets/img/pic_bg.png') // 图片的base64
     }
   },
   methods: {

@@ -20,7 +20,7 @@
       </el-form-item>
       <el-form-item>
         <!-- 父组件给子组件传值  props 封面类型 封面图片 -->
-        <cover-image @updateImages="updateImages" :type="formData.cover.type" :images="formData.cover.images"></cover-image>
+        <cover-image @updateImages="updateImages"  :images="formData.cover.images"></cover-image>
       </el-form-item>
       <el-form-item label="频道" prop='channel_id'>
           <el-select v-model='formData.channel_id'>
