@@ -1,9 +1,13 @@
 <template>
   <div class='cover-image'>
       <!-- 循环生成封面 -->
-     <div class='cover-item' v-for="(item,index) in images" :key="index">
+     <div @click="clickImg(index)" class='cover-item' v-for="(item,index) in images" :key="index">
          <img :src="item?item:defaultImg" alt="" />
      </div>
+    <el-dialog :visible="showDialog" @close="showDialog=false">
+        <!-- 监听事件 -->
+        <select-images @selectOneImg="selectImg"></select-images>
+    </el-dialog>
   </div>
 </template>
 
@@ -13,8 +17,24 @@ export default {
   props: ['type', 'images'],
   data () {
     return {
+      selectIndex: -1,
+      showDialog: false,
       defaultImg: require('../../assets/img/pic_bg.png')
     }
+  },
+  methods: {
+    clickImg (index) {
+      this.showDialog = true
+      this.selectIndex = index // 赋值当前点击的索引
+    },
+    selectImg (url) {
+      // 显示图片  => 图片来源 =>上层 => props只能读取 不能更改 只能上层去改
+      // 显示图片 => 获取图片 => 通过 再次传递 传给上层组件 => 只传图片 => 因为images是个数组 只传一个值 不足以修改
+    // url  index
+      this.$emit('updateImages', url, this.selectIndex) // 再次抛出事件
+      this.showDialog = false
+    }
+
   }
 }
 </script>
