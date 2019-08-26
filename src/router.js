@@ -45,6 +45,9 @@ export default new Router({
       }, {
         path: '/home/account', // 账户信息
         component: () => import('./views/account') // 按需加载的写法
+      }, {
+        path: '/home/fansdata', // 账户信息
+        component: () => import('./views/fans') // 按需加载的写法
       }
       ]
     }
