@@ -65,40 +65,51 @@ export default {
       this.getComments() // 获取当前newPage的数据
     },
     // 打开或者关闭
-    closeOrOpen (row) {
+    async closeOrOpen (row) {
       let mess = row.comment_status ? '关闭' : '打开'
-      this.$confirm(`您确定要${mess}评论吗`, '提示').then(() => {
-        this.$axios({
+      // this.$confirm(`您确定要${mess}评论吗`, '提示').then(() => {
+      //   this.$axios({
+      //     method: 'put',
+      //     url: '/comments/status',
+      //     params: { article_id: row.id.toString() },
+      //     data: { allow_comment: !row.comment_status } // 状态是反着的
+      //   }).then(() => {
+      //     // 如果进入到then函数 一定成功
+      //     this.getComments()
+      //   })
+      // })
+      try {
+        await this.$confirm(`您确定要${mess}评论吗`, '提示')
+        await this.$axios({
           method: 'put',
           url: '/comments/status',
           params: { article_id: row.id.toString() },
           data: { allow_comment: !row.comment_status } // 状态是反着的
-        }).then(() => {
-          // 如果进入到then函数 一定成功
-          this.getComments()
         })
-      })
+        this.getComments()
+      } catch (error) {
+        console.log(error)
+      }
     },
     // 查询评论列表数据
     // query参数 => 指的是get参数 => url链接上
     // post参数 => 指的是body参数
     // axios 中 有一个对象存储的就是query参数  params
     // axios 中 有一个对象存储的就是body参数  data
-    getComments () {
+    async getComments () {
       this.loading = true // 将加载进度设置成加载状态
       let pageParams = { page: this.page.currentPage,
         per_page: this.page.pageSize } // 页码参数
-      this.$axios({
+      let result = await this.$axios({
         url: '/articles',
         params: {
           response_type: 'comment', // 查询评论相关的数据
           ...pageParams
         }
-      }).then(result => {
-        this.list = result.data.results // 取到列表数据 给 当前的数据对象
-        this.page.total = result.data.total_count // 文章评论列表总数 赋值给当前分页的总数
-        this.loading = false // 关闭加载进度
       })
+      this.list = result.data.results // 取到列表数据 给 当前的数据对象
+      this.page.total = result.data.total_count // 文章评论列表总数 赋值给当前分页的总数
+      this.loading = false // 关闭加载进度
     },
     // row 当条数据对象
     // column 当前列的属性

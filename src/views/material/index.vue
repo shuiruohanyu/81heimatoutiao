@@ -83,19 +83,17 @@ export default {
       })
     },
     // 收藏或者取消收藏
-    collectOrCancel (item) {
+    async collectOrCancel (item) {
       // is_collected  是否是收藏 如果is_collected为true  则表示已经收藏 这时点击时  应该取消
       // 如果is_collected为false  则表示没有收藏 这时点击时  应该收藏\
       let mess = item.is_collected ? '取消收藏' : '收藏'
-      this.$confirm(`您是否要${mess}此图片?`, '提示').then(() => {
-        this.$axios({
-          method: 'put',
-          url: `/user/images/${item.id}`,
-          data: { collect: !item.is_collected } // 取相反的状态
-        }).then(result => {
-          this.getMaterial() // 重新获取数据
-        })
+      await this.$confirm(`您是否要${mess}此图片?`, '提示')
+      await this.$axios({
+        method: 'put',
+        url: `/user/images/${item.id}`,
+        data: { collect: !item.is_collected } // 取相反的状态
       })
+      this.getMaterial() // 重新获取数据
     },
     // 删除素材方法
     delMaterial (item) {

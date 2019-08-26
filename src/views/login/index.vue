@@ -70,18 +70,17 @@ export default {
       // validate  手动校验表单数据
       // isOK是 当前表单是否通过了校验
       // result是当前的校验结果
-      this.$refs.loginForm.validate(isOK => {
+      this.$refs.loginForm.validate(async isOK => {
         if (isOK) {
           // 通过了校验
-          this.$axios({
+          let result = await this.$axios({
             method: 'post',
             url: '/authorizations',
             data: this.formData // post参数是在data中写入的
-          }).then(result => {
-            window.localStorage.setItem('user-info', JSON.stringify(result.data))
-            // 编程式导航
-            this.$router.push('/home')
           })
+          window.localStorage.setItem('user-info', JSON.stringify(result.data))
+          // 编程式导航
+          this.$router.push('/home')
         }
       })
     }
