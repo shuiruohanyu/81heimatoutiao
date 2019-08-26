@@ -29,6 +29,7 @@
 </template>
 
 <script>
+import { LoginByMobile } from '../../api/login'
 export default {
   data () {
     // 定义了一个自定义函数
@@ -73,11 +74,15 @@ export default {
       this.$refs.loginForm.validate(async isOK => {
         if (isOK) {
           // 通过了校验
-          let result = await this.$axios({
-            method: 'post',
-            url: '/authorizations',
-            data: this.formData // post参数是在data中写入的
-          })
+          // let result = await this.$axios({
+          //   method: 'post',
+          //   url: '/authorizations',
+          //   data: this.formData // post参数是在data中写入的
+          // })
+          // window.localStorage.setItem('user-info', JSON.stringify(result.data))
+          // // 编程式导航
+          // this.$router.push('/home')
+          let result = await LoginByMobile(this.formData)
           window.localStorage.setItem('user-info', JSON.stringify(result.data))
           // 编程式导航
           this.$router.push('/home')
