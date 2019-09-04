@@ -2,7 +2,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './permission'
 import Component from './components' // 引入我们自己定义的插件
-import 'element-ui/lib/theme-chalk/index.css' // 引入样式
+import 'element-ui/lib/theme-chalk/index.css' // 引入样式1
 import './styles/index.less' // 引文重置的基础样式
 import axios from './utils/axios.config' // 把axios插件给了Vue对象的原型属性
 import {
